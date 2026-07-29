@@ -1,18 +1,18 @@
 // サイト全体で使う共通定数
 
 /** サイト名・キャッチ */
-export const SITE_NAME = 'Fortune Lab☆！';
-export const SITE_NAME_JA = 'フォーチュンラボ';
+export const SITE_NAME = 'Lab online（仮）';
+export const SITE_NAME_JA = 'Lab online（仮）';
 export const SITE_TAGLINE = 'あなたの運命を照らす、オンライン占い館';
 
 /**
- * 姉妹サイト（Branch）へのリンク
- * Fortune Lab は相談者が鑑定を受けるサイト。
- * Branch はここで活躍する占い師の学び・育成コミュニティ。
+ * 姉妹サイト（Fortune Lab☆！）へのリンク
+ * Lab online（仮） は相談者が鑑定を受けるサイト。
+ * Fortune Lab☆！ はここで活躍する占い師の学び・育成コミュニティ。
  * ※ base が異なるため相手サイトへは絶対URLでリンクする。
  */
 export const SISTER_SITE_URL = 'https://mayotesoh.github.io/Branch-site/';
-export const SISTER_SITE_NAME = 'Branch';
+export const SISTER_SITE_NAME = 'Fortune Lab☆！';
 export const SISTER_SITE_DESC = '占い師コミュニティ';
 
 /**
@@ -26,7 +26,7 @@ export const LINE_LABEL = 'LINEで相談する';
 
 /**
  * 予約データ送信先（Google Apps Script ウェブアプリURL）
- * Fortune Lab 用に新しく発行した GAS の /exec URL を設定してください。
+ * Lab online（仮） 用に新しく発行した GAS の /exec URL を設定してください。
  * gas/README.md のセットアップ手順を参照。
  * 未設定（空文字）の場合、予約フォームは送信できず案内メッセージを表示します。
  */
