@@ -77,6 +77,10 @@ export interface Teller {
   specialties: string[];
   schedule: string;
   price: string;
+  /** 時間別料金（円）。未設定は 0 */
+  price30: number;
+  price60: number;
+  price90: number;
   order: number;
 }
 
@@ -138,6 +142,9 @@ export function getTellers(): Promise<Teller[]> {
           specialties: pMulti(p['得意相談']),
           schedule: pText(p['受付時間']),
           price: pText(p['料金目安']),
+          price30: p['料金30分']?.number ?? 0,
+          price60: p['料金60分']?.number ?? 0,
+          price90: p['料金90分']?.number ?? 0,
           order: pNumber(p['表示順']),
         } as Teller;
       });

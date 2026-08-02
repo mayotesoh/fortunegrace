@@ -62,7 +62,14 @@ const durationLabel = (m: number) =>
           <select id="teller" name="teller">
             <option value="">指定なし（おまかせ）</option>
             {tellers.map((t) => (
-              <option value={t.pageId} data-id={t.id} data-name={t.name}>
+              <option
+                value={t.pageId}
+                data-id={t.id}
+                data-name={t.name}
+                data-p30={t.price30}
+                data-p60={t.price60}
+                data-p90={t.price90}
+              >
                 {t.name}{t.role ? `（${t.role}）` : ''}
               </option>
             ))}
@@ -103,6 +110,11 @@ const durationLabel = (m: number) =>
           <label for="note">ご相談内容・ご要望<span class="opt">任意</span></label>
           <textarea id="note" name="note" rows="3"
             placeholder="鑑定でお聞きになりたいことなど"></textarea>
+        </div>
+
+        <div class="price-box" id="price-box">
+          <span>お支払い金額</span>
+          <strong id="price">占い師を選択</strong>
         </div>
 
         <button type="submit" id="submit-btn" class="btn btn-primary submit-btn">
@@ -239,6 +251,22 @@ const durationLabel = (m: number) =>
   tellerSelect.addEventListener('change', loadSlots);
   dateInput.addEventListener('change', loadSlots);
   durationSelect.addEventListener('change', loadSlots); // 時間を変えると空き枠も変わる
+
+  // ---- 占い師×時間で金額を表示 ----
+  const priceEl = document.getElementById('price');
+  function updatePrice() {
+    const opt = tellerSelect.options[tellerSelect.selectedIndex];
+    if (!opt || !opt.value) {
+      priceEl.textContent = '占い師を選択';
+      return;
+    }
+    const dur = Number(durationSelect.value) || 60;
+    const p = Number(opt.getAttribute('data-p' + dur)) || 0;
+    priceEl.textContent = p > 0 ? '¥' + p.toLocaleString('ja-JP') : '要お問い合わせ';
+  }
+  tellerSelect.addEventListener('change', updatePrice);
+  durationSelect.addEventListener('change', updatePrice);
+  updatePrice();
 
   // 決済をキャンセルして戻ってきた場合の案内
   (function notifyCanceled() {
@@ -488,6 +516,20 @@ const durationLabel = (m: number) =>
     color: var(--color-text-muted);
     font-size: 0.88rem;
     margin-top: 1.5rem;
+  }
+  .price-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--color-bg-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 0.8rem 1.1rem;
+    font-size: 0.95rem;
+  }
+  .price-box strong {
+    font-size: 1.35rem;
+    color: var(--color-primary-soft);
   }
   .pay-note {
     text-align: center;

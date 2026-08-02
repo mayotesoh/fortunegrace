@@ -26,8 +26,13 @@ function isStripeEnabled_() {
   return !!getStripeKey_();
 }
 
-/** 占い師DBの「鑑定料金」を取得（未設定は既定額） */
-function getTellerPrice_(tellerPageId) {
+/**
+ * 占い師DBから鑑定時間に応じた料金を取得。
+ *   優先：料金{duration}分 → フォールバック：鑑定料金（単一） → DEFAULT_PRICE
+ * @param {string} tellerPageId
+ * @param {number} durationMin 30 / 60 / 90
+ */
+function getTellerPrice_(tellerPageId, durationMin) {
   if (!tellerPageId) return DEFAULT_PRICE;
   const token = getNotionToken_();
   if (!token) return DEFAULT_PRICE;
@@ -38,8 +43,17 @@ function getTellerPrice_(tellerPageId) {
   });
   if (res.getResponseCode() < 200 || res.getResponseCode() >= 300) return DEFAULT_PRICE;
   const p = (JSON.parse(res.getContentText()) || {}).properties || {};
-  const amt = p['鑑定料金'] && typeof p['鑑定料金'].number === 'number' ? p['鑑定料金'].number : null;
-  return amt && amt > 0 ? Math.round(amt) : DEFAULT_PRICE;
+  const num = function (key) {
+    return p[key] && typeof p[key].number === 'number' && p[key].number > 0 ? Math.round(p[key].number) : null;
+  };
+  // 1) 時間別料金
+  const byDur = num('料金' + Number(durationMin) + '分');
+  if (byDur) return byDur;
+  // 2) 旧・単一料金にフォールバック
+  const single = num('鑑定料金');
+  if (single) return single;
+  // 3) 既定額
+  return DEFAULT_PRICE;
 }
 
 /**
@@ -62,7 +76,7 @@ function handleCheckout(data) {
     throw new Error('その時間はちょうど予約が入りました。恐れ入りますが別の時間をお選びください。');
   }
 
-  const amount = getTellerPrice_(r.tellerPageId);
+  const amount = getTellerPrice_(r.tellerPageId, r.duration);
   const completeUrl = (data.completeUrl || '').toString();
   const cancelUrl = (data.cancelUrl || '').toString();
   if (!/^https?:\/\//.test(completeUrl) || !/^https?:\/\//.test(cancelUrl)) {
