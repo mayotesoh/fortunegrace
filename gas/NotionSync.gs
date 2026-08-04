@@ -53,12 +53,12 @@ function syncReservationToNotion(r, opts) {
   if (r.tellerPageId) {
     properties['希望占い師'] = { relation: [{ id: r.tellerPageId }] };
   }
-  // 決済情報（Stripe前払い済みのとき）
+  // 決済情報（PAY.JP前払い済みのとき）
   if (opts.paid) {
     properties['決済状態'] = { select: { name: '支払済み' } };
     if (r.amount) properties['金額'] = { number: Number(r.amount) };
-    if (r.stripeSessionId) {
-      properties['決済ID'] = { rich_text: [{ text: { content: r.stripeSessionId } }] };
+    if (r.chargeId) {
+      properties['決済ID'] = { rich_text: [{ text: { content: r.chargeId } }] };
     }
   }
 

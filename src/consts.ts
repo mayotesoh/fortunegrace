@@ -25,6 +25,13 @@ export const LINE_URL = 'https://lin.ee/rGGCtFe';
 export const LINE_LABEL = 'LINEで相談する';
 
 /**
+ * PAY.JP 公開鍵（pk_test_… / pk_live_…）
+ * 公開鍵はクライアントに出しても安全。秘密鍵はGASのスクリプトプロパティへ。
+ * 空文字なら決済はオフ（前払いなしで予約を受け付ける）。
+ */
+export const PAYJP_PUBLIC_KEY = '';
+
+/**
  * 予約データ送信先（Google Apps Script ウェブアプリURL）
  * Lab online（仮） 用に新しく発行した GAS の /exec URL を設定してください。
  * gas/README.md のセットアップ手順を参照。

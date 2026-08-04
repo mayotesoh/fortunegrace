@@ -39,8 +39,8 @@ function doPost(e) {
       throw new Error('リクエストボディが空です。');
     }
     const data = JSON.parse(e.postData.contents);
-    if (data.action === 'checkout') {
-      return handleCheckout(data); // Payment.gs
+    if (data.action === 'reserve_charge') {
+      return handleReserveCharge(data); // Payment.gs（PAY.JP課金 or 前払いなし）
     }
     return handleFormReservation(data);
   } catch (err) {
@@ -177,9 +177,6 @@ function doGet(e) {
         closed: !!result.closed,
         duration: result.duration,
       });
-    }
-    if (params.action === 'confirm') {
-      return confirmCheckout((params.session_id || '').toString()); // Payment.gs
     }
     return jsonOutput({ status: 'ok', message: 'Fortune Lab 予約API は稼働中です。' });
   } catch (err) {

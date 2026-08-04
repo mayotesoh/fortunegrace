@@ -1,0 +1,174 @@
+---
+// PAY.JP カード入力モーダル（共通）
+// 使い方（呼び出し側の JS）:
+//   if (window.PayjpCard?.enabled) {
+//     window.PayjpCard.open({ amount, name, email, onToken: (token) => {...} });
+//   } else { /* 決済オフ時のフォールバック */ }
+import { PAYJP_PUBLIC_KEY } from '../consts';
+---
+
+<div id="payjp-modal" class="payjp-modal" hidden aria-hidden="true">
+  <div class="payjp-box" role="dialog" aria-modal="true" aria-label="カード決済">
+    <button type="button" id="payjp-close" class="payjp-close" aria-label="閉じる">✕</button>
+    <p class="payjp-title">カードでお支払い</p>
+    <p class="payjp-amount" id="payjp-amount"></p>
+    <div id="payjp-card-element" class="payjp-card"></div>
+    <p id="payjp-error" class="payjp-error" role="alert"></p>
+    <button type="button" id="payjp-pay" class="btn btn-primary payjp-pay">お支払いを確定</button>
+    <p class="payjp-secure">🔒 カード情報は PAY.JP により安全に処理され、当サイトには保存されません。</p>
+  </div>
+</div>
+
+<script define:vars={{ PAYJP_PUBLIC_KEY }}>
+  (function () {
+    const modal = document.getElementById('payjp-modal');
+    const amountEl = document.getElementById('payjp-amount');
+    const errorEl = document.getElementById('payjp-error');
+    const payBtn = document.getElementById('payjp-pay');
+    const closeBtn = document.getElementById('payjp-close');
+
+    // 公開鍵が無ければ決済オフ
+    if (!PAYJP_PUBLIC_KEY) {
+      window.PayjpCard = { enabled: false };
+      return;
+    }
+
+    let payjp, cardElement, current = null, ready = false;
+
+    // pay.js を動的読み込み → 初期化
+    const s = document.createElement('script');
+    s.src = 'https://js.pay.jp/v2/pay.js';
+    s.onload = function () {
+      try {
+        payjp = Payjp(PAYJP_PUBLIC_KEY);
+        const elements = payjp.elements();
+        cardElement = elements.create('card');
+        cardElement.mount('#payjp-card-element');
+        ready = true;
+      } catch (e) {
+        console.error('PAY.JP init error:', e);
+      }
+    };
+    document.head.appendChild(s);
+
+    function close() {
+      modal.hidden = true;
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      current = null;
+    }
+    closeBtn.addEventListener('click', close);
+    modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
+
+    payBtn.addEventListener('click', async function () {
+      if (!ready || !current) return;
+      errorEl.textContent = '';
+      payBtn.disabled = true;
+      payBtn.textContent = '処理中…';
+      try {
+        const res = await payjp.createToken(cardElement, {
+          card: { name: current.name || '', email: current.email || '' },
+        });
+        if (res.error) {
+          errorEl.textContent = res.error.message || 'カード情報をご確認ください。';
+          return;
+        }
+        const cb = current.onToken;
+        close();
+        cb(res.id); // トークンIDを呼び出し側へ
+      } catch (e) {
+        errorEl.textContent = '通信エラーが発生しました。もう一度お試しください。';
+      } finally {
+        payBtn.disabled = false;
+        payBtn.textContent = 'お支払いを確定';
+      }
+    });
+
+    window.PayjpCard = {
+      enabled: true,
+      open({ amount, name, email, onToken }) {
+        current = { name, email, onToken };
+        amountEl.textContent = amount ? 'お支払い金額：¥' + Number(amount).toLocaleString('ja-JP') : '';
+        errorEl.textContent = '';
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      },
+    };
+  })();
+</script>
+
+<style>
+  .payjp-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem;
+  }
+  .payjp-box {
+    position: relative;
+    background: var(--color-surface, #fff);
+    color: var(--color-text, #222);
+    width: 100%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 2rem 1.6rem 1.6rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  }
+  .payjp-close {
+    position: absolute;
+    top: 0.8rem;
+    right: 0.9rem;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: transparent;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: var(--color-text-muted, #888);
+  }
+  .payjp-title {
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin: 0 0 0.3rem;
+  }
+  .payjp-amount {
+    color: var(--color-primary-soft, #5f43a0);
+    font-weight: 700;
+    margin: 0 0 1.2rem;
+  }
+  .payjp-card {
+    padding: 0.9rem;
+    border: 1px solid var(--color-border, #ddd);
+    border-radius: 10px;
+    background: #fff;
+    margin-bottom: 0.8rem;
+  }
+  .payjp-error {
+    color: #d9534f;
+    font-size: 0.88rem;
+    min-height: 1.1em;
+    margin: 0 0 0.6rem;
+  }
+  .payjp-pay {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    font-family: inherit;
+  }
+  .payjp-pay:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  .payjp-secure {
+    text-align: center;
+    color: var(--color-text-muted, #888);
+    font-size: 0.78rem;
+    margin: 0.9rem 0 0;
+  }
+</style>

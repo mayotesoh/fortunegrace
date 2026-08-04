@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PayjpCard from '../components/PayjpCard.astro';
 import { GAS_URL, LIFF_ID, LINE_URL, MENU_TYPES, DURATIONS, DEFAULT_DURATION } from '../consts';
 import { getTellers } from '../lib/notion';
 
@@ -136,6 +137,8 @@ const durationLabel = (m: number) =>
       }
     </div>
   </section>
+
+  <PayjpCard />
 </Layout>
 
 <!-- LIFF SDK -->
@@ -333,43 +336,52 @@ const durationLabel = (m: number) =>
     }
 
     const userId = lineUserId || 'web-' + Date.now();
+    const reservation = {
+      action: 'reserve_charge',
+      userName, userId, email, phone,
+      tellerPageId, tellerName,
+      menu, date, time, duration, note,
+    };
 
+    // 表示用の金額（GAS側で最終的に再計算して課金）
+    const opt = tellerSelect.options[tellerSelect.selectedIndex];
+    const amount = opt && opt.value ? Number(opt.getAttribute('data-p' + duration)) || 0 : 0;
+
+    // 決済が有効ならカードモーダル → トークン → 課金。無効なら前払いなし予約。
+    if (window.PayjpCard && window.PayjpCard.enabled) {
+      window.PayjpCard.open({
+        amount,
+        name: userName,
+        email,
+        onToken: (token) => sendReservation({ ...reservation, token }),
+      });
+    } else {
+      sendReservation(reservation); // token なし → GASが前払いなしで受付
+    }
+  });
+
+  async function sendReservation(payload) {
     submitBtn.disabled = true;
     submitBtn.textContent = '送信中…';
-
-    // 決済成功／キャンセル時の戻り先（このサイトの絶対URL）
-    const basePath = (BASE || '/').replace(/\/$/, '');
-    const completeUrl = window.location.origin + basePath + '/reserve/complete/';
-    const cancelUrl = window.location.origin + basePath + '/reserve/';
-
     try {
-      // CORSプリフライト回避のため text/plain で送信（GAS側でJSON.parse）
       const res = await fetch(GAS_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'checkout',
-          userName, userId, email, phone,
-          tellerPageId, tellerName,
-          menu, date, time, duration, note,
-          completeUrl, cancelUrl,
-        }),
+        body: JSON.stringify(payload),
       });
       const result = await res.json();
-
-      if (result.status === 'checkout' && result.url) {
-        // Stripe の決済ページへ
-        showResult('決済ページへ移動します…', '');
-        window.location.href = result.url;
-        return;
-      } else if (result.status === 'success') {
-        // 前払いなし（Stripe未設定時）のフォールバック
-        showResult(`ご予約を受け付けました。（${menu} / ${date} ${time}〜 ${duration}分）折り返しご連絡いたします。`, 'success');
+      if (result.status === 'success') {
+        const paid = result.paid ? '（お支払い完了）' : '';
+        showResult(
+          `ご予約を受け付けました${paid}。（${payload.menu} / ${payload.date} ${payload.time}〜 ${payload.duration}分）折り返しご連絡いたします。`,
+          'success'
+        );
         form.reset();
+        updatePrice && updatePrice();
         if (typeof liff !== 'undefined' && LIFF_ID && liff.isInClient && liff.isInClient()) {
           try {
             await liff.sendMessages([
-              { type: 'text', text: `予約しました：${menu} / ${date} ${time}〜（${duration}分）` },
+              { type: 'text', text: `予約しました：${payload.menu} / ${payload.date} ${payload.time}〜（${payload.duration}分）` },
             ]);
           } catch (_) {}
           setTimeout(() => liff.closeWindow(), 1200);
@@ -384,7 +396,7 @@ const durationLabel = (m: number) =>
       submitBtn.disabled = false;
       submitBtn.textContent = '予約して支払いへ進む';
     }
-  });
+  }
 </script>
 
 <style>
