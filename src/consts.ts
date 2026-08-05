@@ -27,9 +27,11 @@ export const LINE_LABEL = 'LINEで相談する';
 /**
  * PAY.JP 公開鍵（pk_test_… / pk_live_…）
  * 公開鍵はクライアントに出しても安全。秘密鍵はGASのスクリプトプロパティへ。
- * 空文字なら決済はオフ（前払いなしで予約を受け付ける）。
+ * ※ フロントの公開鍵とGASの秘密鍵は必ず同じモードにすること。
+ * 本番切替時は下記を pk_live_13d6bd6a76607d4c6702a99b に差し替え、
+ * GASの PAYJP_SECRET_KEY も本番用(sk_live_…)にする。
  */
-export const PAYJP_PUBLIC_KEY = '';
+export const PAYJP_PUBLIC_KEY = 'pk_test_58c51cb25eec8a844a85bdf8';
 
 /**
  * 予約データ送信先（Google Apps Script ウェブアプリURL）
