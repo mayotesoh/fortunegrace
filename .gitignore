@@ -42,3 +42,5 @@ src/data/teller-images.json
 
 # 一時調査スクリプト
 scripts/_*
+
+scratch_*.mjs
