@@ -63,23 +63,26 @@ import { PAYJP_PUBLIC_KEY } from '../consts';
     modal.addEventListener('click', (e) => { if (e.target === modal) close(); });
 
     payBtn.addEventListener('click', async function () {
-      if (!ready || !current) return;
+      if (!current) return;
+      if (!ready) {
+        errorEl.textContent = '決済の準備中です。数秒おいて、もう一度お試しください。';
+        return;
+      }
       errorEl.textContent = '';
       payBtn.disabled = true;
       payBtn.textContent = '処理中…';
       try {
-        const res = await payjp.createToken(cardElement, {
-          card: { name: current.name || '', email: current.email || '' },
-        });
-        if (res.error) {
-          errorEl.textContent = res.error.message || 'カード情報をご確認ください。';
+        // カード名義に日本語が入るとPAY.JPが弾くため、トークンはカードのみで作成
+        const res = await payjp.createToken(cardElement);
+        if (!res || res.error) {
+          errorEl.textContent = (res && res.error && res.error.message) || 'カード情報をご確認ください。';
           return;
         }
         const cb = current.onToken;
         close();
         cb(res.id); // トークンIDを呼び出し側へ
       } catch (e) {
-        errorEl.textContent = '通信エラーが発生しました。もう一度お試しください。';
+        errorEl.textContent = 'カード処理でエラーが発生しました。番号・有効期限・CVCをご確認ください。';
       } finally {
         payBtn.disabled = false;
         payBtn.textContent = 'お支払いを確定';
