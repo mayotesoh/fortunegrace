@@ -40,6 +40,20 @@ const durationLabel = (m: number) =>
       <form id="reserve-form" class="reserve-form">
         <p id="liff-status" class="liff-status" hidden></p>
 
+        <div class="field">
+          <span class="label-like">ご希望の鑑定<span class="req">必須</span></span>
+          <div class="mode-row">
+            <label class="mode">
+              <input type="radio" name="mode" value="reserve" checked />
+              <span><strong>日時を予約</strong><small>ご希望の日時で予約</small></span>
+            </label>
+            <label class="mode">
+              <input type="radio" name="mode" value="now" />
+              <span><strong>今すぐ鑑定</strong><small>できるだけ早くご連絡</small></span>
+            </label>
+          </div>
+        </div>
+
         <div class="field" id="name-field">
           <label for="userName">お名前<span class="req">必須</span></label>
           <input type="text" id="userName" name="userName" placeholder="お名前を入力"
@@ -94,18 +108,22 @@ const durationLabel = (m: number) =>
           </select>
         </div>
 
-        <div class="field">
+        <div class="field" id="date-field">
           <label for="date">ご希望日<span class="req">必須</span></label>
           <input type="date" id="date" name="date" required />
         </div>
 
-        <div class="field">
+        <div class="field" id="time-field">
           <label for="time">ご希望時間<span class="req">必須</span></label>
           <select id="time" name="time" required>
             <option value="" disabled selected>時間を選択</option>
             {timeSlots.map((t) => <option value={t}>{t}</option>)}
           </select>
         </div>
+
+        <p class="now-note" id="now-note" hidden>
+          「今すぐ鑑定」を選択中です。空きのある占い師から、できるだけ早くご連絡いたします。
+        </p>
 
         <div class="field">
           <label for="note">ご相談内容・ご要望<span class="opt">任意</span></label>
@@ -271,6 +289,26 @@ const durationLabel = (m: number) =>
   durationSelect.addEventListener('change', updatePrice);
   updatePrice();
 
+  // ---- 予約 / 今すぐ鑑定 の切替 ----
+  const dateField = document.getElementById('date-field');
+  const timeField = document.getElementById('time-field');
+  const nowNote = document.getElementById('now-note');
+  const timeSel = document.getElementById('time');
+  function currentMode() {
+    return form.querySelector('input[name="mode"]:checked').value;
+  }
+  function applyMode() {
+    const now = currentMode() === 'now';
+    dateField.hidden = now;
+    timeField.hidden = now;
+    nowNote.hidden = !now;
+    // 今すぐは日時入力を必須から外す（送信時に自動設定）
+    dateInput.required = !now;
+    timeSel.required = !now;
+  }
+  form.querySelectorAll('input[name="mode"]').forEach((r) => r.addEventListener('change', applyMode));
+  applyMode();
+
   // 決済をキャンセルして戻ってきた場合の案内
   (function notifyCanceled() {
     const params = new URLSearchParams(window.location.search);
@@ -313,21 +351,33 @@ const durationLabel = (m: number) =>
       return;
     }
 
+    const mode = currentMode(); // 'reserve' or 'now'
+    const isNow = mode === 'now';
     const userName = nameInput.value.trim();
     const email = document.getElementById('email').value.trim();
     const phone = document.getElementById('phone').value.trim();
     const menu = document.getElementById('menu').value;
-    const date = dateInput.value;
-    const time = document.getElementById('time').value;
     const duration = Number(durationSelect.value);
     const note = document.getElementById('note').value.trim();
+
+    // 今すぐ鑑定は日時を自動設定（申込日時＝今）
+    let date, time;
+    if (isNow) {
+      const n = new Date();
+      const p = (x) => String(x).padStart(2, '0');
+      date = `${n.getFullYear()}-${p(n.getMonth() + 1)}-${p(n.getDate())}`;
+      time = `${p(n.getHours())}:${p(n.getMinutes())}`;
+    } else {
+      date = dateInput.value;
+      time = document.getElementById('time').value;
+    }
 
     const tellerOpt = tellerSelect.options[tellerSelect.selectedIndex];
     const tellerPageId = tellerSelect.value; // Notion 占い師DB のページID（リレーション用）
     const tellerName = tellerOpt ? (tellerOpt.getAttribute('data-name') || '') : '';
 
     if (!userName || !email || !menu || !date || !time) {
-      showResult('必須項目をすべて入力してください。', 'error');
+      showResult(isNow ? '必須項目をすべて入力してください。' : '必須項目（日時を含む）をすべて入力してください。', 'error');
       return;
     }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -338,6 +388,7 @@ const durationLabel = (m: number) =>
     const userId = lineUserId || 'web-' + Date.now();
     const reservation = {
       action: 'reserve_charge',
+      reserveType: isNow ? '今すぐ' : '予約',
       userName, userId, email, phone,
       tellerPageId, tellerName,
       menu, date, time, duration, note,
@@ -528,6 +579,53 @@ const durationLabel = (m: number) =>
     color: var(--color-text-muted);
     font-size: 0.88rem;
     margin-top: 1.5rem;
+  }
+  .label-like {
+    font-weight: 600;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.45rem;
+  }
+  .mode-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+  }
+  .mode {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+  }
+  .mode:has(input:checked) {
+    border-color: var(--color-primary);
+    background: var(--color-bg-soft);
+  }
+  .mode input {
+    accent-color: var(--color-primary);
+  }
+  .mode span {
+    display: grid;
+    line-height: 1.3;
+  }
+  .mode small {
+    color: var(--color-text-muted);
+    font-size: 0.76rem;
+  }
+  .now-note {
+    background: var(--color-bg-soft);
+    border: 1px solid var(--color-border);
+    border-radius: 10px;
+    padding: 0.7rem 0.9rem;
+    font-size: 0.85rem;
+    color: var(--color-text-muted);
+    margin: 0;
   }
   .price-box {
     display: flex;

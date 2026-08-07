@@ -106,8 +106,8 @@ function handleReserveCharge(data) {
     return jsonOutput({ status: 'success', paid: false });
   }
 
-  // 空き枠の最終確認
-  if (isSlotTaken_(r.tellerPageId, r.date, r.time, r.duration)) {
+  // 空き枠の最終確認（今すぐ鑑定は日時指定なしのためスキップ）
+  if (r.reserveType !== '今すぐ' && isSlotTaken_(r.tellerPageId, r.date, r.time, r.duration)) {
     throw new Error('その時間はちょうど予約が入りました。恐れ入りますが別の時間をお選びください。');
   }
 

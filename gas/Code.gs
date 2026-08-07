@@ -30,7 +30,7 @@ const HEADERS = [
 
 /**
  * POST エントリーポイント
- *   { action:'checkout', ... } … Stripe決済ページURLを返す（Payment.gs）
+ *   { action:"reserve_charge", token, ... } … PAY.JPで課金して予約（Payment.gs）
  *   （それ以外）                … 前払いなしで予約を確定
  */
 function doPost(e) {
@@ -51,7 +51,7 @@ function doPost(e) {
   }
 }
 
-/** data（フォーム or Stripe metadata）→ 予約オブジェクトに正規化 */
+/** data（予約フォーム）→ 予約オブジェクトに正規化 */
 function normalizeReservation_(data) {
   return {
     userName: (data.userName || '').toString(),
@@ -64,6 +64,7 @@ function normalizeReservation_(data) {
     date: (data.date || '').toString(),
     time: (data.time || '').toString(),
     duration: normalizeDuration_(data.duration), // 所要時間（分）
+    reserveType: data.reserveType === '今すぐ' ? '今すぐ' : '予約',
     note: (data.note || '').toString(),
   };
 }
@@ -102,7 +103,7 @@ function appendReservation(r) {
 
 /**
  * 予約1件を記録（スプレッドシート追記 ＋ Notion同期）。ロックで直列化。
- * @param {Object} r 予約オブジェクト（r.amount / r.stripeSessionId は決済時のみ）
+ * @param {Object} r 予約オブジェクト（r.amount / r.chargeId は決済時のみ）
  * @param {{check?:boolean, paid?:boolean}} opts
  *        check: 記録前に二重予約チェックして重複なら throw（前払いなしの直接予約用）
  *        paid : 決済済みとしてNotionに金額・決済IDを記録
@@ -112,7 +113,7 @@ function recordReservation_(r, opts) {
   const lock = LockService.getScriptLock();
   lock.waitLock(30000);
   try {
-    if (opts.check && isSlotTaken_(r.tellerPageId, r.date, r.time, r.duration)) {
+    if (opts.check && r.reserveType !== '今すぐ' && isSlotTaken_(r.tellerPageId, r.date, r.time, r.duration)) {
       throw new Error(
         '申し訳ありません。その時間はちょうど予約が入りました。別の時間をお選びください。'
       );
