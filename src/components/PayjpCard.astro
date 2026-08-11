@@ -114,6 +114,10 @@ import { PAYJP_PUBLIC_KEY } from '../consts';
     justify-content: center;
     padding: 1.2rem;
   }
+  /* hidden 属性を確実に効かせる（display:flex に打ち消されないように） */
+  .payjp-modal[hidden] {
+    display: none;
+  }
   .payjp-box {
     position: relative;
     background: var(--color-surface, #fff);
