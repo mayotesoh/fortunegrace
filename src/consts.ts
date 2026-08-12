@@ -6,13 +6,13 @@ export const SITE_NAME_JA = 'Lab online（仮）';
 export const SITE_TAGLINE = 'あなたの運命を照らす、オンライン占い館';
 
 /**
- * 姉妹サイト（Fortune Lab☆！）へのリンク
+ * 姉妹サイト（Fortune Labo）へのリンク
  * Lab online（仮） は相談者が鑑定を受けるサイト。
- * Fortune Lab☆！ はここで活躍する占い師の学び・育成コミュニティ。
+ * Fortune Labo はここで活躍する占い師の学び・育成コミュニティ。
  * ※ base が異なるため相手サイトへは絶対URLでリンクする。
  */
 export const SISTER_SITE_URL = 'https://fortunelab-marchfourth.com/';
-export const SISTER_SITE_NAME = 'Fortune Lab☆！';
+export const SISTER_SITE_NAME = 'Fortune Labo';
 export const SISTER_SITE_DESC = '占い師コミュニティ';
 
 /**
