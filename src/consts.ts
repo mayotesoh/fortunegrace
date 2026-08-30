@@ -16,6 +16,13 @@ export const SISTER_SITE_NAME = 'Fortune Labo';
 export const SISTER_SITE_DESC = '占い師コミュニティ';
 
 /**
+ * サイト作成のご相談（制作者ページ）
+ * フッターの「サイト作成希望者」リンク先。
+ */
+export const SITE_REQUEST_URL = 'https://mayonery.jp/website/';
+
+
+/**
  * 公式LINE 友だち追加・予約・相談リンク
  * 未設定（空文字）なら、LINE関連のボタンは表示されません。
  */

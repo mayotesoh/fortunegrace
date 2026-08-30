@@ -1,5 +1,5 @@
 ---
-import { LINE_URL, SITE_NAME, SITE_TAGLINE, SISTER_SITE_URL, SISTER_SITE_NAME, SISTER_SITE_DESC } from '../consts';
+import { LINE_URL, SITE_NAME, SITE_TAGLINE, SISTER_SITE_URL, SISTER_SITE_NAME, SISTER_SITE_DESC, SITE_REQUEST_URL } from '../consts';
 const year = new Date().getFullYear();
 const base = import.meta.env.BASE_URL;
 const link = (p: string) => `${base.replace(/\/$/, '')}/${p.replace(/^\//, '')}`;
@@ -25,6 +25,12 @@ const link = (p: string) => `${base.replace(/\/$/, '')}/${p.replace(/^\//, '')}`
         target="_blank"
         rel="noopener noreferrer"
       >姉妹サイト｜{SISTER_SITE_DESC} {SISTER_SITE_NAME} ↗</a>
+      <a
+        class="footer-request"
+        href={SITE_REQUEST_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+      >サイト作成希望者 ↗</a>
     </nav>
   </div>
   <div class="container footer-bottom">
@@ -81,6 +87,16 @@ const link = (p: string) => `${base.replace(/\/$/, '')}/${p.replace(/^\//, '')}`
   }
   .footer-sister:hover {
     color: var(--color-night-text) !important;
+  }
+  .footer-request {
+    margin-top: 0.9rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: 0.82rem;
+    color: var(--color-night-muted);
+  }
+  .footer-request:hover {
+    color: var(--color-accent);
   }
   .footer-bottom {
     margin-top: 2rem;
