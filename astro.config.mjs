@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 
 // GitHub Pages 用の設定
 // ─────────────────────────────────────────────────────────
-// プロジェクトページ（https://mayotesoh.github.io/fortune-lab-site/）に
+// プロジェクトページ（https://mayotesoh.github.io/fortunegrace/）に
 // デプロイする想定です。
 //
 //  - 独自ドメインや <ユーザー名>.github.io リポジトリを使う場合は
@@ -12,6 +12,6 @@ import { defineConfig } from 'astro/config';
 // ─────────────────────────────────────────────────────────
 export default defineConfig({
   site: 'https://mayotesoh.github.io',
-  base: '/fortune-lab',
+  base: '/fortunegrace',
   output: 'static',
 });

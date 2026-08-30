@@ -1,5 +1,5 @@
 /**
- * Fortune Lab ─ 予約を Notion「Fortune Lab 鑑定予約DB」へ同期する
+ * Fortune Grace ─ 予約を Notion「Fortune Grace 鑑定予約DB」へ同期する
  * ----------------------------------------------------------------------
  * appendReservation() から呼ばれ、スプレッドシート追記と“併せて”
  * Notion にも1ページ作成します。失敗してもスプシ記録は成立するよう、
@@ -9,12 +9,12 @@
  *  1. Apps Script の「プロジェクトの設定 → スクリプト プロパティ」に登録:
  *        キー:  NOTION_TOKEN
  *        値:   ntn_xxxxxxxx...（Branchと同じインテグレーションのトークンでOK）
- *  2. 「Fortune Lab 鑑定予約DB」をそのインテグレーションに「コネクト」しておく。
+ *  2. 「Fortune Grace 鑑定予約DB」をそのインテグレーションに「コネクト」しておく。
  *  3. testNotionSync() を実行して Notion に行が出るか確認。
  * ----------------------------------------------------------------------
  */
 
-// Fortune Lab 鑑定予約DB の Database ID（機密ではない）
+// Fortune Grace 鑑定予約DB の Database ID（機密ではない）
 const NOTION_RESERVATION_DB = 'e4fe0261c81546959d86c293a002ad3d';
 const NOTION_VERSION = '2022-06-28';
 

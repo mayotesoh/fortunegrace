@@ -1,9 +1,9 @@
 {
-  "name": "fortune-lab-site",
+  "name": "fortunegrace",
   "type": "module",
   "version": "0.1.0",
   "private": true,
-  "description": "Fortune Lab - オンライン占い館サイト",
+  "description": "Fortune Grace - オンライン占い館サイト",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",

@@ -139,7 +139,7 @@ function placeholderSVG(name) {
         font-size="40" font-weight="700" fill="#efe9ff">${esc(name)}</text>
   <text x="${W / 2}" y="612" text-anchor="middle"
         font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
-        font-size="20" fill="#c9a227" letter-spacing="4">FORTUNE LAB</text>
+        font-size="20" fill="#c9a227" letter-spacing="4">FORTUNE GRACE</text>
   <text x="${W / 2}" y="720" text-anchor="middle"
         font-family="'Hiragino Kaku Gothic ProN','Noto Sans JP',sans-serif"
         font-size="17" fill="#b6abdf">宣材写真は準備中です</text>

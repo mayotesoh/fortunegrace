@@ -1,13 +1,13 @@
 // サイト全体で使う共通定数
 
 /** サイト名・キャッチ */
-export const SITE_NAME = 'Lab online（仮）';
-export const SITE_NAME_JA = 'Lab online（仮）';
+export const SITE_NAME = 'Fortune Grace';
+export const SITE_NAME_JA = 'Fortune Grace';
 export const SITE_TAGLINE = 'あなたの運命を照らす、オンライン占い館';
 
 /**
  * 姉妹サイト（Fortune Labo）へのリンク
- * Lab online（仮） は相談者が鑑定を受けるサイト。
+ * Fortune Grace は相談者が鑑定を受けるサイト。
  * Fortune Labo はここで活躍する占い師の学び・育成コミュニティ。
  * ※ base が異なるため相手サイトへは絶対URLでリンクする。
  */
@@ -35,7 +35,7 @@ export const PAYJP_PUBLIC_KEY = 'pk_test_58c51cb25eec8a844a85bdf8';
 
 /**
  * 予約データ送信先（Google Apps Script ウェブアプリURL）
- * Lab online（仮） 用に新しく発行した GAS の /exec URL を設定してください。
+ * Fortune Grace 用に新しく発行した GAS の /exec URL を設定してください。
  * gas/README.md のセットアップ手順を参照。
  * 未設定（空文字）の場合、予約フォームは送信できず案内メッセージを表示します。
  */

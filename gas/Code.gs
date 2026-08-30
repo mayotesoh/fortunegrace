@@ -1,9 +1,9 @@
 /**
- * Fortune Lab ─ 鑑定予約受付 Google Apps Script（フォーム処理）
+ * Fortune Grace ─ 鑑定予約受付 Google Apps Script（フォーム処理）
  * ----------------------------------------------------------------------
  * サイトの予約フォーム / LIFF からの JSON（text/plain）を受け取り、
  *   (1) Google スプレッドシートに1行追記
- *   (2) Notion「Fortune Lab 鑑定予約DB」に1ページ作成（NotionSync.gs）
+ *   (2) Notion「Fortune Grace 鑑定予約DB」に1ページ作成（NotionSync.gs）
  * します。
  *
  * スプレッドシートの列:
@@ -179,7 +179,7 @@ function doGet(e) {
         duration: result.duration,
       });
     }
-    return jsonOutput({ status: 'ok', message: 'Fortune Lab 予約API は稼働中です。' });
+    return jsonOutput({ status: 'ok', message: 'Fortune Grace 予約API は稼働中です。' });
   } catch (err) {
     return jsonOutput({
       status: 'error',

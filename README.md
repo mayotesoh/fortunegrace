@@ -1,4 +1,4 @@
-# Fortune Lab（フォーチュンラボ）
+# Fortune Grace（フォーチュングレイス）
 
 実力ある占い師が集う、オンライン占い館サイト。
 **Astro** で構築し、**Notion** をコンテンツ管理元（占い師・ブログ・予約）として連携、
@@ -20,11 +20,11 @@ Branch（占い師向け教育コミュニティ）で育った人材を、一�
 
 | DB | Database ID | 用途 |
 | --- | --- | --- |
-| Fortune Lab 占い師DB | `507fd75b0aa94c48a259d05b6b211ea4` | 占い師名簿 |
-| Fortune Lab ブログ記事DB | `de8681bc1b4f45eeaf77dba5fcfefa52` | ブログ（著者は占い師DBへのリレーション） |
-| Fortune Lab 鑑定予約DB | `e4fe0261c81546959d86c293a002ad3d` | 予約管理（GASが追記） |
+| Fortune Grace 占い師DB | `507fd75b0aa94c48a259d05b6b211ea4` | 占い師名簿 |
+| Fortune Grace ブログ記事DB | `de8681bc1b4f45eeaf77dba5fcfefa52` | ブログ（著者は占い師DBへのリレーション） |
+| Fortune Grace 鑑定予約DB | `e4fe0261c81546959d86c293a002ad3d` | 予約管理（GASが追記） |
 
-> Branch側：講師DB＋Branchブログ、Fortune Lab側：占い師DB＋Fortune Labブログ、
+> Branch側：講師DB＋Branchブログ、Fortune Grace側：占い師DB＋Fortune Graceブログ、
 > という住み分けで、同一ワークスペース内に共存します。
 
 DB IDはコードに保持（機密ではない）。**トークン `NOTION_TOKEN` だけ**を
@@ -34,7 +34,7 @@ DB IDはコードに保持（機密ではない）。**トークン `NOTION_TOKE
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321/fortune-lab-site/
+npm run dev      # http://localhost:4321/fortunegrace/
 npm run build    # dist/ に静的出力
 npm run preview  # ビルド結果をプレビュー
 ```
@@ -47,11 +47,11 @@ NOTION_TOKEN=ntn_xxxxxxxx...
 
 ## デプロイ（GitHub Pages）
 
-1. GitHub に `fortune-lab-site` リポジトリを作成（アカウント: `mayotesoh`）
+1. GitHub に `fortunegrace` リポジトリを作成（アカウント: `mayotesoh`）
 2. **Settings → Secrets and variables → Actions** に `NOTION_TOKEN` を登録
 3. **Settings → Pages → Source: GitHub Actions** に設定
 4. `main` に push すると `.github/workflows/deploy.yml` が自動ビルド＆公開
-   - 公開URL: `https://mayotesoh.github.io/fortune-lab-site/`
+   - 公開URL: `https://mayotesoh.github.io/fortunegrace/`
    - 定期ビルド（日本時間 朝9時・夜21時）で Notion の更新を自動反映
    - Actions タブの「Run workflow」で即時反映も可能
 

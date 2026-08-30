@@ -1,7 +1,7 @@
-# Fortune Lab 予約API（Google Apps Script）
+# Fortune Grace 予約API（Google Apps Script）
 
 サイトの予約フォームから送信された鑑定予約を、
-**Google スプレッドシート**と **Notion「Fortune Lab 鑑定予約DB」**の
+**Google スプレッドシート**と **Notion「Fortune Grace 鑑定予約DB」**の
 両方に記録する Web API です。
 
 ## ファイル構成
@@ -26,7 +26,7 @@
 1. **プロジェクトの設定 → スクリプト プロパティ** に登録:
    - キー: `NOTION_TOKEN` / 値: `ntn_xxxx...`
      （Branchと同じインテグレーションのトークンでOK。DBを一元管理できます）
-2. Notion で **「Fortune Lab 鑑定予約DB」をそのインテグレーションにコネクト**
+2. Notion で **「Fortune Grace 鑑定予約DB」をそのインテグレーションにコネクト**
    （すでに接続済みなら不要）
 3. エディタで `testNotionSync()` を実行 → Notionにテスト行が出れば成功
    （不要な行は削除）
