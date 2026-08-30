@@ -2,7 +2,7 @@
 import Layout from '../layouts/Layout.astro';
 import Stars from '../components/Stars.astro';
 import { getTellers, getPosts } from '../lib/notion';
-import { SITE_TAGLINE, MENU_TYPES } from '../consts';
+import { SITE_NAME, SITE_TAGLINE, MENU_TYPES } from '../consts';
 
 const base = import.meta.env.BASE_URL;
 const link = (p: string) => `${base.replace(/\/$/, '')}/${p.replace(/^\//, '')}`;
@@ -31,6 +31,15 @@ const steps = [
   <section class="hero night on-night">
     <Stars />
     <div class="container hero-inner">
+      <img
+        class="hero-logo"
+        src={link('/logo.png')}
+        alt={SITE_NAME}
+        width="900"
+        height="945"
+        fetchpriority="high"
+        decoding="async"
+      />
       <p class="hero-eyebrow">オンライン占い館</p>
       <h1 class="hero-title">
         あなたの運命を、<br />そっと照らす場所。
@@ -194,8 +203,16 @@ const steps = [
 <style>
   /* Hero */
   .hero {
-    padding-block: 6.5rem 5.5rem;
+    padding-block: 4.5rem 5.5rem;
     text-align: center;
+  }
+  /* ブランドロゴ（金の紋章）。夜空の上でほのかに発光させる */
+  .hero-logo {
+    display: block;
+    width: min(230px, 52vw);
+    height: auto;
+    margin: 0 auto 1.8rem;
+    filter: drop-shadow(0 0 26px rgba(201, 162, 39, 0.35));
   }
   .hero-inner {
     position: relative;
@@ -205,7 +222,7 @@ const steps = [
     color: var(--color-accent);
     letter-spacing: 0.28em;
     font-size: 0.82rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1rem;
   }
   .hero-title {
     font-size: clamp(2.1rem, 6.2vw, 3.5rem);
