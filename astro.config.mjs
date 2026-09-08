@@ -11,7 +11,8 @@ import { defineConfig } from 'astro/config';
 //  - リポジトリ名を変えた場合は `base` を合わせて変更してください。
 // ─────────────────────────────────────────────────────────
 export default defineConfig({
-  site: 'https://mayotesoh.github.io',
-  base: '/fortunegrace',
+  // 独自ドメイン（f-grace-uranai.com）に移行。base はルート。
+  site: 'https://f-grace-uranai.com',
+  base: '/',
   output: 'static',
 });
