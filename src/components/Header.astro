@@ -1,5 +1,5 @@
 ---
-import { SITE_NAME } from '../consts';
+import { SITE_NAME, LINE_URL } from '../consts';
 
 const base = import.meta.env.BASE_URL;
 const withBase = (p: string) => `${base.replace(/\/$/, '')}/${p.replace(/^\//, '')}`;
@@ -9,7 +9,7 @@ const links = [
   { href: withBase('/'), label: 'ホーム' },
   { href: withBase('/tellers'), label: '占い師' },
   { href: withBase('/blog'), label: 'ブログ' },
-  { href: withBase('/reserve'), label: '予約' },
+  { href: withBase('/flow'), label: 'ご利用の流れ' },
 ];
 ---
 
@@ -42,7 +42,11 @@ const links = [
     <nav class="nav" id="site-nav">
       {links.map((l) => <a href={l.href}>{l.label}</a>)}
       <a class="nav-sister" href={withBase('/for-tellers')}>占い師になりたい方へ</a>
-      <a class="nav-cta" href={withBase('/reserve')}>鑑定を予約</a>
+      {LINE_URL ? (
+        <a class="nav-cta" href={LINE_URL} target="_blank" rel="noopener noreferrer">公式LINEで予約</a>
+      ) : (
+        <a class="nav-cta" href={withBase('/reserve')}>鑑定を予約</a>
+      )}
     </nav>
   </div>
 </header>

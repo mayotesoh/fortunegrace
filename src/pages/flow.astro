@@ -1,0 +1,170 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { LINE_URL } from '../consts';
+
+const base = import.meta.env.BASE_URL;
+const link = (p: string) => `${base.replace(/\/$/, '')}/${p.replace(/^\//, '')}`;
+
+const steps = [
+  {
+    icon: '🔮',
+    title: '占い師を探す',
+    body: '占い師一覧から、気になる先生のプロフィールをチェック。得意占術・得意な相談・鑑定スタイルを見て、あなたに合う占い師を見つけてください。',
+  },
+  {
+    icon: '💬',
+    title: '公式LINEで指名・お申し込み',
+    body: 'Fortune Grace の公式LINEを友だち追加し、鑑定を受けたい占い師を「指名」してお申し込みください。メニューから、ご相談内容など必要なことをお送りいただけます。',
+  },
+  {
+    icon: '📅',
+    title: '日程を調整',
+    body: '指名された占い師（または運営）から、公式LINEで日程調整のご連絡をします。ご都合の良い日時を決めましょう。',
+  },
+  {
+    icon: '💳',
+    title: '事前のお支払い（前決済）',
+    body: '鑑定料金は事前決済（前払い）です。ご案内するお支払い方法でお手続きください。お支払い確認後、鑑定が確定します。',
+  },
+  {
+    icon: '📞',
+    title: '電話で鑑定',
+    body: '当日は公式LINEの通話で鑑定を行います。ゆっくりお話しください。もっと聞きたい場合は、延長分を事前にお支払いのうえ延長も可能です。',
+  },
+];
+---
+
+<Layout
+  title="ご利用の流れ｜Fortune Grace"
+  description="Fortune Grace のご予約から鑑定までの流れをご案内します。占い師の指名・お申し込みは公式LINEから。鑑定は電話で、料金は事前決済です。"
+>
+  <section class="section">
+    <div class="container narrow">
+      <h1 class="page-title">ご利用の<span class="mark">流れ</span></h1>
+      <p class="page-lead">
+        Fortune Grace は<strong>完全予約・指名制</strong>です。<br />
+        お申し込みは公式LINEから。鑑定は<strong>電話</strong>で行います。
+      </p>
+
+      <ol class="steps">
+        {steps.map((s, i) => (
+          <li class="step">
+            <div class="step-num">{i + 1}</div>
+            <div class="step-body">
+              <h2 class="step-title"><span class="step-icon">{s.icon}</span>{s.title}</h2>
+              <p class="step-text">{s.body}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+
+      <div class="cta-box">
+        <p class="cta-lead">まずは占い師を探すか、公式LINEからお気軽にご相談ください。</p>
+        <div class="cta-actions">
+          <a class="btn btn-ghost" href={link('/tellers')}>占い師を探す</a>
+          {LINE_URL && (
+            <a class="btn btn-primary" href={LINE_URL} target="_blank" rel="noopener noreferrer">
+              公式LINEで予約・相談する
+            </a>
+          )}
+        </div>
+      </div>
+
+      <p class="note">
+        ※料金は占い師・鑑定時間によって異なります。各占い師のプロフィールをご確認ください。<br />
+        ※お支払いは事前決済（前払い）です。延長される場合も、延長分を事前にお支払いいただきます。
+      </p>
+    </div>
+  </section>
+</Layout>
+
+<style>
+  .narrow { max-width: 720px; }
+  .page-title {
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    margin-bottom: 1rem;
+  }
+  .mark { color: var(--color-accent); }
+  .page-lead {
+    color: var(--color-text-muted);
+    margin-bottom: 2.5rem;
+    line-height: 1.9;
+  }
+  .page-lead strong { color: var(--color-primary-soft); }
+
+  .steps {
+    list-style: none;
+    display: grid;
+    gap: 1rem;
+    counter-reset: none;
+    padding: 0;
+    margin: 0 0 2.5rem;
+  }
+  .step {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1rem;
+    align-items: start;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.3rem 1.5rem;
+    position: relative;
+  }
+  .step-num {
+    width: 2.1rem;
+    height: 2.1rem;
+    flex-shrink: 0;
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+    font-weight: 700;
+    color: #fff;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+    font-variant-numeric: tabular-nums;
+  }
+  .step-title {
+    font-size: 1.15rem;
+    margin: 0.1rem 0 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .step-icon { font-size: 1.15rem; }
+  .step-text {
+    color: var(--color-text-muted);
+    line-height: 1.8;
+    margin: 0;
+    font-size: 0.95rem;
+  }
+
+  .cta-box {
+    background: linear-gradient(135deg, rgba(124, 92, 191, 0.1), rgba(201, 162, 39, 0.1));
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: 1.6rem;
+    text-align: center;
+  }
+  .cta-lead {
+    margin: 0 0 1.1rem;
+    color: var(--color-text);
+    font-weight: 600;
+  }
+  .cta-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    justify-content: center;
+  }
+
+  .note {
+    margin-top: 1.6rem;
+    color: var(--color-text-muted);
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 460px) {
+    .cta-actions .btn { width: 100%; }
+  }
+</style>

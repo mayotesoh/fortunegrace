@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getTellers, getTellerHtml, getPosts } from '../../lib/notion';
+import { LINE_URL } from '../../consts';
 
 export async function getStaticPaths() {
   const tellers = await getTellers();
@@ -25,12 +26,12 @@ const hasBody = html && html.trim().length > 0;
 // 鑑定スタイルは説明文があれば優先、無ければ multi_select を連結
 const styleText = teller.styleDesc || teller.styles.join(' / ');
 
-// プロフィール表示行（チラシの並び：占術→得意相談→鑑定スタイル→受付時間）
+// プロフィール表示行（占術→得意相談→鑑定スタイル）
+// ※受付時間は「載せない」方針（受付外と誤解され機会損失になるため）。予約は公式LINEで指名・日程調整。
 const rows = [
   { icon: '🔮', label: 'メイン占術', values: teller.arts },
   { icon: '💬', label: '得意相談', values: teller.specialties },
   { icon: '🤝', label: '鑑定スタイル', text: styleText },
-  { icon: '🕐', label: '受付時間', text: teller.schedule },
 ].filter((r) => (r.values && r.values.length > 0) || (r.text && r.text.length > 0));
 ---
 
@@ -104,9 +105,18 @@ const rows = [
             }
           </dl>
 
-          <a class="btn btn-primary reserve-btn" href={link(`/reserve?teller=${teller.id}`)}>
-            {teller.name} に鑑定を予約する
-          </a>
+          <div class="reserve-block">
+            {LINE_URL ? (
+              <a class="btn btn-primary reserve-btn" href={LINE_URL} target="_blank" rel="noopener noreferrer">
+                公式LINEで {teller.name} を指名して予約
+              </a>
+            ) : (
+              <a class="btn btn-primary reserve-btn" href={link(`/reserve?teller=${teller.id}`)}>
+                {teller.name} に鑑定を予約する
+              </a>
+            )}
+            <a class="reserve-flow" href={link('/flow')}>ご予約〜鑑定の流れを見る →</a>
+          </div>
         </div>
       </div>
 
@@ -304,8 +314,19 @@ const rows = [
     font-size: 0.82rem;
     color: var(--color-text);
   }
+  .reserve-block {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
   .reserve-btn {
     display: inline-block;
+  }
+  .reserve-flow {
+    font-size: 0.86rem;
+    color: var(--color-accent-soft);
+    font-weight: 600;
   }
   .intro {
     max-width: 760px;
